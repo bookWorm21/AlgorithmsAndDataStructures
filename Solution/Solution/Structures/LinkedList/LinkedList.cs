@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting;
+using Microsoft.VisualBasic;
 
 namespace AlgorithmsDataStructures
 {
@@ -19,6 +21,61 @@ namespace AlgorithmsDataStructures
         {
             head = null;
             tail = null;
+        }
+
+        public LinkedList(params int[] values) : this()
+        {
+            foreach (var value in values)
+            {
+                AddInTail(new Node(value));
+            }
+        }
+
+        public static bool operator ==(LinkedList first, LinkedList second)
+        {
+            int firstCount = first.Count();
+            int secondCount = second.Count();
+            
+            if (firstCount != secondCount)
+            {
+                return false;
+            }
+
+            if (firstCount == 0)
+            {
+                return true;
+            }
+
+            if (first.head.value != second.head.value || first.tail.value != second.tail.value)
+            {
+                return false;
+            }
+
+            Node firstNode = first.head;
+            Node secondNode = second.head;
+
+            while (firstNode != null)
+            {
+                if (firstNode.value != secondNode.value)
+                {
+                    return false;
+                }
+                
+                firstNode = firstNode.next;
+                secondNode = secondNode.next;
+            }
+
+            return true;
+        }
+
+        public static bool operator !=(LinkedList first, LinkedList second)
+        {
+            return !(first == second);
+        }
+
+        public bool CanSum(LinkedList other)
+        {
+            return Count() == other.Count();
         }
 
         public void AddInTail(Node _item)
@@ -143,6 +200,10 @@ namespace AlgorithmsDataStructures
             {
                 _nodeToInsert.next = head;
                 head = _nodeToInsert;
+                if (head.next == null)
+                {
+                    tail = head;
+                }
                 return;
             }
 

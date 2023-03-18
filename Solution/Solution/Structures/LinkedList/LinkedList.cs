@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting;
-using Microsoft.VisualBasic;
 
 namespace AlgorithmsDataStructures
 {
@@ -71,11 +69,6 @@ namespace AlgorithmsDataStructures
         public static bool operator !=(LinkedList first, LinkedList second)
         {
             return !(first == second);
-        }
-
-        public bool CanSum(LinkedList other)
-        {
-            return Count() == other.Count();
         }
 
         public void AddInTail(Node _item)

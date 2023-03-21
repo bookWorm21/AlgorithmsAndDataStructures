@@ -3,26 +3,40 @@ using System.Collections.Generic;
 
 namespace AlgorithmsDataStructures
 {
-    public class LinkedList
+
+    public class Node
+    {
+        public int value;
+        public Node next, prev;
+
+        public Node(int _value) 
+        { 
+            value = _value; 
+            next = null;
+            prev = null;
+        }
+    }
+
+    public class LinkedList2
     {
         public Node head;
         public Node tail;
 
-        public LinkedList()
+        public LinkedList2()
         {
             head = null;
             tail = null;
         }
-
-        public LinkedList(params int[] values) : this()
+        
+        public LinkedList2(params int[] values) : this()
         {
             foreach (var value in values)
             {
                 AddInTail(new Node(value));
             }
         }
-
-        public static bool operator ==(LinkedList first, LinkedList second)
+        
+        public static bool operator ==(LinkedList2 first, LinkedList2 second)
         {
             int firstCount = first.Count();
             int secondCount = second.Count();
@@ -56,18 +70,42 @@ namespace AlgorithmsDataStructures
                 secondNode = secondNode.next;
             }
 
+            firstNode = first.tail;
+            secondNode = second.tail;
+
+            while (firstNode != null)
+            {
+                if (firstNode.value != secondNode.value)
+                {
+                    return false;
+                }
+                
+                firstNode = firstNode.prev;
+                secondNode = secondNode.prev;
+            }
+
             return true;
         }
 
-        public static bool operator !=(LinkedList first, LinkedList second)
+        public static bool operator !=(LinkedList2 first, LinkedList2 second)
         {
             return !(first == second);
         }
 
         public void AddInTail(Node _item)
         {
-            if (head == null) head = _item;
-            else              tail.next = _item;
+            if (head == null) 
+            {
+                head = _item;
+                head.next = null;
+                head.prev = null;
+            } 
+            else 
+            {
+                tail.next = _item;
+                _item.prev = tail;
+            }
+            
             tail = _item;
         }
 
@@ -114,6 +152,11 @@ namespace AlgorithmsDataStructures
                     {
                         head = node.next;
                     }
+                    
+                    if (node.next != null)
+                    {
+                        node.next.prev = prev;
+                    }
 
                     if (node == tail)
                     {
@@ -145,6 +188,11 @@ namespace AlgorithmsDataStructures
                     else
                     {
                         head = node.next;
+                    }
+                    
+                    if (node.next != null)
+                    {
+                        node.next.prev = prev;
                     }
 
                     if (node == tail)
@@ -188,14 +236,26 @@ namespace AlgorithmsDataStructures
                 head = _nodeToInsert;
                 if (head.next == null)
                 {
+                    head.prev = null;
                     tail = head;
                 }
+                else
+                {
+                    head.next.prev = head;
+                }
+                
                 return;
             }
 
             Node next = _nodeAfter.next;
             _nodeAfter.next = _nodeToInsert;
             _nodeToInsert.next = next;
+            _nodeToInsert.prev = _nodeAfter;
+
+            if (_nodeToInsert.next != null)
+            {
+                _nodeToInsert.next.prev = _nodeToInsert;
+            }
 
             if (_nodeAfter == tail)
             {

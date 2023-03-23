@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AlgorithmsDataStructures
 {
@@ -17,9 +18,65 @@ namespace AlgorithmsDataStructures
         public DynArray()
         {
             count = 0;
+            array = Array.Empty<T>();
             MakeArray(MinCapacity);
         }
 
+        public DynArray(params T[] values)
+        {
+            array = Array.Empty<T>();
+            MakeArray(Math.Max(values.Length, MinCapacity));
+            count = values.Length;
+            Array.ConstrainedCopy(values, 0, array, 0, values.Length);
+        }
+
+        public static bool operator ==(DynArray<T> first, DynArray<T> second)
+        {
+            if (Equals(first, null) && Equals(second, null))
+            {
+                return true;
+            }
+
+            if (Equals(first, null) || Equals(second, null))
+            {
+                return false;
+            }
+            
+            return first.GetEnumerable().SequenceEqual(second.GetEnumerable());
+        }
+
+        public static bool operator !=(DynArray<T> first, DynArray<T> second)
+        {
+            return !(first == second);
+        }
+
+        private bool Equals(DynArray<T> other)
+        {
+            return Equals(array, other.array) && count == other.count && capacity == other.capacity;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            
+            return Equals((DynArray<T>) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(array, count, capacity);
+        }
+
+        public IEnumerable<T> GetEnumerable()
+        {
+            for (int i = 0; i < count; ++i)
+            {
+                yield return array[i];
+            }
+        }
+        
         public void MakeArray(int new_capacity)
         {
             if (capacity == new_capacity)
@@ -28,8 +85,9 @@ namespace AlgorithmsDataStructures
             }
             
             var temp = new T[new_capacity];
-            Array.ConstrainedCopy(array, 0, temp, 0, new_capacity);
+            Array.ConstrainedCopy(array, 0, temp, 0, count);
             array = temp;
+            capacity = new_capacity;
         }
 
         public T GetItem(int index)
@@ -44,9 +102,9 @@ namespace AlgorithmsDataStructures
 
         public void Append(T itm)
         {
-            ++count;
             TryExpansion();
-            array[count - 1] = itm;
+            array[count] = itm;
+            ++count;
         }
 
         public void Insert(T itm, int index)
@@ -61,9 +119,9 @@ namespace AlgorithmsDataStructures
                 Append(itm);
                 return;
             }
-
-            ++count;
+            
             TryExpansion();
+            ++count;
             Array.ConstrainedCopy(array, index, array, index + 1, count - 1 - index);
             array[index] = itm;
         }
@@ -77,19 +135,19 @@ namespace AlgorithmsDataStructures
 
             if (index == count - 1)
             {
-                --count;
                 TryConstriction();
+                --count;
                 return;
             }
             
             Array.ConstrainedCopy(array, index + 1, array, index, count - 1 - index);
-            --count;
             TryConstriction();
+            --count;
         }
 
         private bool TryExpansion()
         {
-            if (count > capacity)
+            if (count == capacity)
             {
                 MakeArray(capacity * ExpansionValue);
                 return true;
@@ -100,7 +158,7 @@ namespace AlgorithmsDataStructures
 
         private bool TryConstriction()
         {
-            if (count < capacity * OccupancyForConstriction)
+            if (count <= capacity * OccupancyForConstriction)
             {
                 int newCapacity = (int)(capacity / ConstrictionValue);
                 newCapacity = Math.Max(newCapacity, MinCapacity);

@@ -85,7 +85,7 @@ namespace AlgorithmsDataStructures
             }
             
             var temp = new T[new_capacity];
-            Array.ConstrainedCopy(array, 0, temp, 0, count);
+            Array.ConstrainedCopy(array, 0, temp, 0, Math.Min(new_capacity, count));
             array = temp;
             capacity = new_capacity;
         }

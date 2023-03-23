@@ -36,7 +36,7 @@ namespace AlgorithmsDataStructures.DummyList
         public Node head => dummyNode.Next;
         public Node tail => dummyNode.Prev;
 
-        private Node dummyNode;
+        private readonly Node dummyNode;
 
         public DoublyLinkedListWithDummy()
         {
@@ -85,7 +85,7 @@ namespace AlgorithmsDataStructures.DummyList
         public IEnumerable<int> ForwardEnumerable()
         {
             Node current = dummyNode.Next;
-            while (current != dummyNode)
+            while (current is RealNode)
             {
                 yield return current.Value;
                 current = current.Next;
@@ -95,7 +95,7 @@ namespace AlgorithmsDataStructures.DummyList
         public IEnumerable<int> BackEnumerable()
         {
             Node current = dummyNode.Prev;
-            while (current != dummyNode)
+            while (current is RealNode)
             {
                 yield return current.Value;
                 current = current.Prev;
@@ -113,7 +113,7 @@ namespace AlgorithmsDataStructures.DummyList
         public Node Find(int _value)
         {
             Node node = head;
-            while (node != dummyNode)
+            while (node is RealNode)
             {
                 if (node.Value == _value) 
                     return node;
@@ -127,7 +127,7 @@ namespace AlgorithmsDataStructures.DummyList
         {
             List<Node> nodes = new List<Node>();
             Node node = head;
-            while (node != dummyNode)
+            while (node is RealNode)
             {
                 if (node.Value == _value)
                 {
@@ -142,7 +142,7 @@ namespace AlgorithmsDataStructures.DummyList
         public bool Remove(int _value)
         {
             Node node = head;
-            while (node != dummyNode)
+            while (node is RealNode)
             {
                 if (node.Value == _value)
                 {
@@ -160,7 +160,7 @@ namespace AlgorithmsDataStructures.DummyList
         public void RemoveAll(int _value)
         {
             Node node = head;
-            while (node != dummyNode)
+            while (node is RealNode)
             {
                 if (node.Value == _value)
                 {
@@ -182,7 +182,7 @@ namespace AlgorithmsDataStructures.DummyList
         {
             int count = 0;
             Node node = head;
-            while (node != dummyNode)
+            while (node is RealNode)
             {
                 ++count;
                 node = node.Next;
@@ -193,22 +193,13 @@ namespace AlgorithmsDataStructures.DummyList
 
         public void InsertAfter(Node _nodeAfter, Node _nodeToInsert)
         {
-            if (_nodeAfter == null)
-            {
-                var temp = dummyNode.Next;
-                dummyNode.Next = _nodeToInsert;
-                _nodeToInsert.Next = temp;
-                _nodeToInsert.Prev = dummyNode;
-                temp.Prev = _nodeToInsert;
-            }
-            else
-            {
-                var temp = _nodeAfter.Next;
-                _nodeAfter.Next = _nodeToInsert;
-                _nodeToInsert.Next = temp;
-                _nodeToInsert.Prev = _nodeAfter;
-                temp.Prev = _nodeToInsert;
-            }
+            _nodeAfter ??= dummyNode;
+
+            var temp = _nodeAfter.Next;
+            _nodeAfter.Next = _nodeToInsert;
+            _nodeToInsert.Next = temp;
+            _nodeToInsert.Prev = _nodeAfter;
+            temp.Prev = _nodeToInsert;
         }
     }
 }

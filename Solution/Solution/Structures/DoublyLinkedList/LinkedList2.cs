@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace AlgorithmsDataStructures
 {
-
     public class Node
     {
         public int value;
@@ -144,25 +143,7 @@ namespace AlgorithmsDataStructures
             {
                 if (node.value == _value)
                 {
-                    if (prev != null)
-                    {
-                        prev.next = node.next;
-                    }
-                    else
-                    {
-                        head = node.next;
-                    }
-                    
-                    if (node.next != null)
-                    {
-                        node.next.prev = prev;
-                    }
-
-                    if (node == tail)
-                    {
-                        tail = prev;
-                    }
-                    
+                    RemoveNode(prev, node);
                     return true;
                 }
 
@@ -181,24 +162,7 @@ namespace AlgorithmsDataStructures
             {
                 if (node.value == _value)
                 {
-                    if (prev != null)
-                    {
-                        prev.next = node.next;
-                    }
-                    else
-                    {
-                        head = node.next;
-                    }
-                    
-                    if (node.next != null)
-                    {
-                        node.next.prev = prev;
-                    }
-
-                    if (node == tail)
-                    {
-                        tail = prev;
-                    }
+                    RemoveNode(prev, node);
                 }
                 else
                 {
@@ -230,20 +194,20 @@ namespace AlgorithmsDataStructures
 
         public void InsertAfter(Node _nodeAfter, Node _nodeToInsert)
         {
+            if (head == null)
+            {
+                head = _nodeToInsert;
+                tail = _nodeToInsert;
+                return;
+
+            }
+
             if (_nodeAfter == null)
             {
                 _nodeToInsert.next = head;
+                head.prev = _nodeToInsert;
                 head = _nodeToInsert;
-                if (head.next == null)
-                {
-                    head.prev = null;
-                    tail = head;
-                }
-                else
-                {
-                    head.next.prev = head;
-                }
-                
+
                 return;
             }
 
@@ -260,6 +224,28 @@ namespace AlgorithmsDataStructures
             if (_nodeAfter == tail)
             {
                 tail = _nodeToInsert;
+            }
+        }
+
+        private void RemoveNode(Node prev, Node nodeToDelete)
+        {
+            if (prev != null)
+            {
+                prev.next = nodeToDelete.next;
+            }
+            else
+            {
+                head = nodeToDelete.next;
+            }
+                    
+            if (nodeToDelete.next != null)
+            {
+                nodeToDelete.next.prev = prev;
+            }
+
+            if (nodeToDelete == tail)
+            {
+                tail = prev;
             }
         }
     }

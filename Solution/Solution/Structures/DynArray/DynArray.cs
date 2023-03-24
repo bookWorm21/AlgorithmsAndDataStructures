@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AlgorithmsDataStructures
 {
@@ -41,8 +40,21 @@ namespace AlgorithmsDataStructures
             {
                 return false;
             }
-            
-            return first.GetEnumerable().SequenceEqual(second.GetEnumerable());
+
+            if (first.count != second.count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < first.count; ++i)
+            {
+                if (!Equals(first.GetItem(i), second.GetItem(i)))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public static bool operator !=(DynArray<T> first, DynArray<T> second)

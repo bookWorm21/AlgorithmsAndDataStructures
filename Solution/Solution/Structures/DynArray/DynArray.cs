@@ -69,26 +69,16 @@ namespace AlgorithmsDataStructures
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
+            if (ReferenceEquals(null, obj)) 
+                return false;
+            if (ReferenceEquals(this, obj)) 
+                return true;
+            if (obj.GetType() != GetType()) 
+                return false;
             
             return Equals((DynArray<T>) obj);
         }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(array, count, capacity);
-        }
-
-        public IEnumerable<T> GetEnumerable()
-        {
-            for (int i = 0; i < count; ++i)
-            {
-                yield return array[i];
-            }
-        }
-        
         public void MakeArray(int new_capacity)
         {
             if (capacity == new_capacity)

@@ -193,7 +193,10 @@ namespace AlgorithmsDataStructures.DummyList
 
         public void InsertAfter(Node _nodeAfter, Node _nodeToInsert)
         {
-            _nodeAfter ??= dummyNode;
+            if (_nodeAfter == null)
+            {
+                _nodeAfter = dummyNode;
+            }
 
             var temp = _nodeAfter.Next;
             _nodeAfter.Next = _nodeToInsert;

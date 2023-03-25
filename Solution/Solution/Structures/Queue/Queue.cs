@@ -7,7 +7,7 @@ namespace AlgorithmsDataStructures
     {
         private readonly LinkedList<T> _container;
 
-        public bool IsEmpty => Size() > 0;
+        public bool IsEmpty => Size() == 0;
         
         public Queue()
         {

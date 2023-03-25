@@ -5,7 +5,7 @@
         private readonly Stack<T> _entering;
         private readonly Stack<T> _exiting;
         
-        public bool IsEmpty => Size() > 0;
+        public bool IsEmpty => Size() == 0;
 
         public QueueBasesStack()
         {

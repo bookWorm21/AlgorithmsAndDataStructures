@@ -62,6 +62,20 @@ namespace Tests.OrderedList
         }
 
         [TestMethod]
+        public void Add_AddValueWhenHisOrderOnMiddle_CorrectOrder()
+        {
+            var actualList = new OrderedList<int>(false, 3, 5, 9, 30);
+            var expectedList = new OrderedList<int>(false, 30, 9, 7, 5, 3);
+            actualList.Add(7);
+
+            Assert.IsTrue(expectedList.GetEnumerable().SequenceEqual(actualList.GetEnumerable()));
+            Assert.AreEqual(30, actualList.head.value);
+            Assert.AreEqual(3, actualList.tail.value);
+            Assert.AreEqual(null, actualList.head.prev);
+            Assert.AreEqual(null, actualList.tail.next);
+        }
+
+        [TestMethod]
         public void Add_AddValueToNotAscendingListWithSeveralElements_CorrectOrder()
         {
             var actualList = new OrderedList<int>(false, 5, 3, 7);

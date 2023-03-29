@@ -20,14 +20,10 @@ namespace AlgorithmsDataStructures
     {
         public Node<T> head, tail;
         private bool _ascending;
-        private Node<T> _dummy;
 
         public OrderedList(bool asc)
         {
             _ascending = asc;
-            _dummy = new Node<T>(default);
-            _dummy.next = _dummy;
-            _dummy.prev = _dummy;
             head = null;
             tail = null;
         }
@@ -42,8 +38,8 @@ namespace AlgorithmsDataStructures
 
         public IEnumerable<T> GetEnumerable()
         {
-            var node = _dummy.next;
-            while (node != _dummy)
+            var node = head;
+            while (node != null)
             {
                 yield return node.value;
                 node = node.next;
@@ -76,47 +72,50 @@ namespace AlgorithmsDataStructures
 
         public void Add(T value)
         {
-            var nodeAfter = _dummy.next;
-            while (nodeAfter != _dummy)
+            var nodeAfter = head;
+            bool handleAllList = false;
+            while (!handleAllList)
             {
+                if (nodeAfter == null)
+                {
+                    handleAllList = true;
+                    break;
+                }
+                
                 var compareResult = Compare(nodeAfter.value, value);
 
                 if (compareResult == 0)
                 {
-                    nodeAfter = nodeAfter.next;
                     break;
                 }
 
                 if (_ascending && compareResult > 0)
                 {
+                    nodeAfter = nodeAfter.prev;
                     break;
                 }
 
                 if (!_ascending && compareResult < 0)
                 {
+                    nodeAfter = nodeAfter.prev;
                     break;
                 }
 
                 nodeAfter = nodeAfter.next;
             }
 
-            nodeAfter = nodeAfter.prev;
             var insertedNode = new Node<T>(value);
-            var tempNext = nodeAfter.next;
-            
-            nodeAfter.next = insertedNode;
-            insertedNode.next = tempNext;
-            insertedNode.prev = nodeAfter;
-            tempNext.prev = insertedNode;
-
-            head = _dummy.next;
-            tail = _dummy.prev;
+            if (handleAllList)
+            {
+                nodeAfter = tail;
+            }
+            InsertAfter(nodeAfter, insertedNode);
         }
 
         public Node<T> Find(T val)
         {
-            var node = _dummy.next;
-            while (node != _dummy)
+            var node = head;
+            while (node != null)
             {
                 var compareValue = Compare(node.value, val);
 
@@ -143,34 +142,81 @@ namespace AlgorithmsDataStructures
 
         public void Delete(T val)
         {
-            var node = _dummy.next;
-            while (node != _dummy)
+            Node<T> prev = null;
+            var node = head;
+            while (node != null)
             {
                 if (Compare(val, node.value) == 0)
                 {
-                    node.prev.next = node.next;
-                    node.next.prev = node.prev;
+                    RemoveNode(prev, node);
                     return;
                 }
-                
+
+                prev = node;
                 node = node.next;
             }
+        }
 
-            head = _dummy.next;
-            tail = _dummy.prev;
-
-            if (head == _dummy)
+        private void InsertAfter(Node<T> after, Node<T> insert)
+        {
+            if (head == null)
             {
-                head = null;
-                tail = null;
+                head = insert;
+                tail = insert;
+                return;
+
+            }
+
+            if (after == null)
+            {
+                insert.next = head;
+                head.prev = insert;
+                head = insert;
+
+                return;
+            }
+
+            var next = after.next;
+            after.next = insert;
+            insert.next = next;
+            insert.prev = after;
+
+            if (insert.next != null)
+            {
+                insert.next.prev = insert;
+            }
+
+            if (after == tail)
+            {
+                tail = insert;
+            }
+        }
+        
+        private void RemoveNode(Node<T> prev, Node<T> nodeToDelete)
+        {
+            if (prev != null)
+            {
+                prev.next = nodeToDelete.next;
+            }
+            else
+            {
+                head = nodeToDelete.next;
+            }
+                    
+            if (nodeToDelete.next != null)
+            {
+                nodeToDelete.next.prev = prev;
+            }
+
+            if (nodeToDelete == tail)
+            {
+                tail = prev;
             }
         }
 
         public void Clear(bool asc)
         {
             _ascending = asc;
-            _dummy.next = _dummy;
-            _dummy.prev = _dummy;
             head = null;
             tail = null;
         }
@@ -178,8 +224,8 @@ namespace AlgorithmsDataStructures
         public int Count()
         {
             int count = 0;
-            var current = _dummy.next;
-            while (current != _dummy)
+            var current = head;
+            while (current != null)
             {
                 ++count;
                 current = current.next;
@@ -191,9 +237,9 @@ namespace AlgorithmsDataStructures
         public List<Node<T>> GetAll()
         {
             var result = new List<Node<T>>();
-            var node = _dummy.next;
+            var node = head;
             
-            while(node != _dummy)
+            while(node != null)
             {
                 result.Add(node);
                 node = node.next;

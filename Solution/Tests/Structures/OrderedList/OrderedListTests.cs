@@ -27,7 +27,16 @@ namespace Tests.OrderedList
 
             Assert.IsTrue(expectedList.GetEnumerable().SequenceEqual(actualList.GetEnumerable()));
         }
-        
+
+        [TestMethod]
+        public void Constructor_EmptyList_CorrectHeadAndTail()
+        {
+            var list = new OrderedList<int>(true);
+
+            Assert.AreEqual(null, list.head);
+            Assert.AreEqual(null, list.tail);
+        }
+
         [TestMethod]
         public void Add_AddValueToEmptyList_CorrectHeadAndTailAndList()
         {
@@ -96,7 +105,6 @@ namespace Tests.OrderedList
         public void Find_ListWithoutNeededElement_Null()
         {
             var actualList = new OrderedList<int>(false, 5, 3, 7);
-            var value = 9;
             var actual = actualList.Find(9);
 
             Assert.AreEqual(null, actual);

@@ -54,9 +54,13 @@ namespace AlgorithmsDataStructures
         {
             if(typeof(T) == typeof(String))
             {
-                return String.CompareOrdinal
-                (Convert.ToString(v1).Trim(), 
-                        Convert.ToString(v2).Trim());
+                var str1 = Convert.ToString(v1);
+                var str2 = Convert.ToString(v2);
+                
+                str1 = str1 != null ? str1 : "";
+                str2 = str2 != null ? str2 : "";
+                
+                return string.CompareOrdinal(str1.Trim(),str2.Trim());
             }
 
             if(typeof(T) == typeof(int))
@@ -114,11 +118,23 @@ namespace AlgorithmsDataStructures
             var node = _dummy.next;
             while (node != _dummy)
             {
+                var compareValue = Compare(node.value, val);
+
+                if (_ascending && compareValue > 0)
+                {
+                    return null;
+                }
+
+                if (!_ascending && compareValue < 0)
+                {
+                    return null;
+                }
+                
                 if (Compare(node.value, val) == 0)
                 {
                     return node;
                 }
-                
+
                 node = node.next;
             }
 
@@ -142,6 +158,12 @@ namespace AlgorithmsDataStructures
 
             head = _dummy.next;
             tail = _dummy.prev;
+
+            if (head == _dummy)
+            {
+                head = null;
+                tail = null;
+            }
         }
 
         public void Clear(bool asc)

@@ -60,6 +60,22 @@ namespace Tests.NativeDictionary
         }
 
         [TestMethod]
+        public void Get_OnHaveCollision_UnSuccessValue()
+        {
+            var dictionary = new NativeDictionary<string>(19);
+            var key = "hello my friend";
+            var value = "needed string";
+            var hash = dictionary.HashFun(key);
+            dictionary.slots[hash] = "some busy slot";
+            dictionary.values[hash] = "other value";
+
+            string expected = null;
+            var actual = dictionary.Get(key);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
         public void Put_EmptyDictionary_CorrectValue()
         {
             var dictionary = new NativeDictionary<string>(19);
@@ -90,7 +106,8 @@ namespace Tests.NativeDictionary
             var actual = dictionary.Get(key);
 
             Assert.AreEqual(expected, actual);
-            Assert.AreEqual(key, dictionary.slots[hashIndex]);
+            Assert.AreEqual(oldKey, dictionary.slots[hashIndex]);
+            Assert.AreEqual(key, dictionary.slots[(hashIndex + NativeDictionary<string>.Step) % dictionary.size]);
         }
 
         [TestMethod]
@@ -110,6 +127,22 @@ namespace Tests.NativeDictionary
             var dictionary = new NativeDictionary<string>(19);
             var key = "hello my friend";
             dictionary.Put(key, "some string");
+            bool expected = true;
+            bool actual = dictionary.IsKey(key);
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void IsKey_BusySlotOnCollision_True()
+        {
+            var dictionary = new NativeDictionary<string>(19);
+            var key = "hello my friend";
+            var value = "new string";
+            var hashIndex = dictionary.HashFun(key);
+            dictionary.slots[hashIndex] = "busy slot";
+            dictionary.Put(key, value);
+
             bool expected = true;
             bool actual = dictionary.IsKey(key);
 

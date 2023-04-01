@@ -8,6 +8,7 @@ namespace AlgorithmsDataStructures
         public int size;
         public string [] slots;
         public T [] values;
+        public const int Step = 3;
 
         public NativeDictionary(int sz)
         {
@@ -34,21 +35,87 @@ namespace AlgorithmsDataStructures
 
         public bool IsKey(string key)
         {
+            if (key == null)
+            {
+                return false;
+            }
+            
             int hashIndex = HashFun(key);
+            int stepScale = 0;
+            while (stepScale < size)
+            {
+                if (slots[hashIndex] == null)
+                {
+                    return false;
+                }
+                
+                if (slots[hashIndex] == key)
+                {
+                    return true;
+                }
+                    
+                hashIndex += Step;
+                hashIndex %= size;
+                stepScale += Step;
+            }
             return slots[hashIndex] != null;
         }
 
         public void Put(string key, T value)
         {
+            if (key == null)
+            {
+                return;
+            }
+            
             int hashIndex = HashFun(key);
-            slots[hashIndex] = key;
-            values[hashIndex] = value;
+            int startIndex = hashIndex;
+            int stepScale = 0;
+            while (stepScale < size)
+            {
+                if (slots[hashIndex] == null)
+                {
+                    slots[hashIndex] = key;
+                    values[hashIndex] = value;
+                }
+                
+                if (slots[hashIndex] == key)
+                {
+                    values[hashIndex] = value;
+                    return;
+                }
+                
+                hashIndex += Step;
+                hashIndex %= size;
+                stepScale += Step;
+            }
+            
+            slots[startIndex] = key;
+            values[startIndex] = value;
         }
 
         public T Get(string key)
         {
             int hashIndex = HashFun(key);
-            return values[hashIndex];
+            int stepScale = 0;
+            while (stepScale < size)
+            {
+                if (slots[hashIndex] == null)
+                {
+                    return default;
+                }
+                
+                if (slots[hashIndex] == key)
+                {
+                    return values[hashIndex];
+                }
+                
+                hashIndex += Step;
+                hashIndex %= size;
+                stepScale += Step;
+            }
+            
+            return default;
         }
     } 
 }
